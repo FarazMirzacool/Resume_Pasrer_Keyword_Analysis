@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Parser - Get Interview Ready</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #ff9e00;
+            --danger: #f72585;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+        
+        .form-section, .analysis-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .file-upload {
+            border: 2px dashed var(--light-gray);
+            border-radius: 5px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .file-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .analysis-result {
+            margin-top: 1.5rem;
+        }
+        
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .keyword {
+            background: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .keyword.high {
+            background: rgba(76, 201, 240, 0.2);
+            border-color: var(--success);
+            color: #0a6c7e;
+        }
+        
+        .keyword.medium {
+            background: rgba(255, 158, 0, 0.2);
+            border-color: var(--warning);
+            color: #8a5500;
+        }
+        
+        .keyword.low {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: var(--gray);
+            color: var(--gray);
+        }
+        
+        .score-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: var(--light-gray);
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        
+        .suggestions {
+            margin-top: 1.5rem;
+        }
+        
+        .suggestion-item {
+            padding: 1rem;
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            margin-bottom: 1rem;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: rgba(76, 201, 240, 0.2);
+            border: 1px solid var(--success);
+            color: #0a6c7e;
+        }
+        
+        .alert-error {
+            background: rgba(247, 37, 133, 0.2);
+            border: 1px solid var(--danger);
+            color: #a11d5e;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--gray);
+            border-top: 1px solid var(--light-gray);
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Resume Parser</h1>
+            <p>Upload your resume and get insights to improve your chances of getting noticed</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <section class="form-section">
+                <h2 class="section-title">Your Information</h2>
+                <form id="resumeForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="education">Education Level</label>
+                        <select id="education" required>
+                            <option value="">Select your education level</option>
+                            <option value="highschool">High School</option>
+                            <option value="associate">Associate Degree</option>
+                            <option value="bachelor">Bachelor's Degree</option>
+                            <option value="master">Master's Degree</option>
+                            <option value="phd">PhD</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="college">College/University</label>
+                        <input type="text" id="college" placeholder="Enter your college/university name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="interests">Job Interests/Domains</label>
+                        <textarea id="interests" rows="3" placeholder="e.g., Software Development, Data Science, Marketing, Finance"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Resume</label>
+                        <div class="file-upload" id="fileUploadArea">
+                            <i>📄</i>
+                            <p>Drag & drop your resume here or click to browse</p>
+                            <p><small>Supported formats: PDF, DOC, DOCX (Max 5MB)</small></p>
+                            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" style="display: none;">
+                        </div>
+                        <div id="fileName" style="margin-top: 10px; font-style: italic;"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-block" id="submitBtn">Analyze My Resume</button>
+                    
+                    <div class="loading" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        <p>Analyzing your resume... This may take a few seconds.</p>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="analysis-section">
+                <h2 class="section-title">Analysis Results</h2>
+                <div id="analysisPlaceholder">
+                    <p>Fill out the form and upload your resume to see analysis results.</p>
+                </div>
+                
+                <div id="analysisResult" class="analysis-result" style="display: none;">
+                    <div id="resultAlert"></div>
+                    
+                    <h3>Keyword Analysis</h3>
+                    <p>We've identified the following keywords in your resume:</p>
+                    
+                    <div class="keyword-list" id="keywordList">
+                        <!-- Keywords will be inserted here by JavaScript -->
+                    </div>
+                    
+                    <div class="score-card">
+                        <h3>Resume Score</h3>
+                        <div class="score-value" id="scoreValue">0%</div>
+                        <div class="progress-bar">
+                            <div class="progress" id="scoreProgress" style="width: 0%"></div>
+                        </div>
+                        <p id="scoreFeedback">Your resume needs improvement to stand out to recruiters.</p>
+                    </div>
+                    
+                    <div class="suggestions">
+                        <h3>Suggestions for Improvement</h3>
+                        <div id="suggestionList">
+                            <!-- Suggestions will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Resume Parser &copy; 2023 - Helping you get interview ready</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const resumeFile = document.getElementById('resumeFile');
+            const fileName = document.getElementById('fileName');
+            const resumeForm = document.getElementById('resumeForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const analysisPlaceholder = document.getElementById('analysisPlaceholder');
+            const analysisResult = document.getElementById('analysisResult');
+            const keywordList = document.getElementById('keywordList');
+            const scoreValue = document.getElementById('scoreValue');
+            const scoreProgress = document.getElementById('scoreProgress');
+            const scoreFeedback = document.getElementById('scoreFeedback');
+            const suggestionList = document.getElementById('suggestionList');
+            const resultAlert = document.getElementById('resultAlert');
+            
+            // File upload handling
+            fileUploadArea.addEventListener('click', function() {
+                resumeFile.click();
+            });
+            
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = '#4361ee';
+                fileUploadArea.style.backgroundColor = 'rgba(67, 97, 238, 0.05)';
+            });
+            
+            fileUploadArea.addEventListener('dragleave', function() {
+                fileUploadArea.style.borderColor = '#e9ecef';
+                fileUploadArea.style.backgroundColor = 'transparent';
+            });
+            
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = '#e9ecef';
+                fileUploadArea.style.backgroundColor = 'transparent';
+                
+                if (e.dataTransfer.files.length) {
+                    resumeFile.files = e.dataTransfer.files;
+                    updateFileName();
+                }
+            });
+            
+            resumeFile.addEventListener('change', updateFileName);
+            
+            function updateFileName() {
+                if (resumeFile.files.length > 0) {
+                    fileName.textContent = `Selected file: ${resumeFile.files[0].name}`;
+                } else {
+                    fileName.textContent = '';
+                }
+            }
+            
+            // Form submission - SIMPLIFIED AND GUARANTEED TO WORK
+            resumeForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const education = document.getElementById('education').value;
+                const college = document.getElementById('college').value;
+                const interests = document.getElementById('interests').value;
+                
+                // Check if file is uploaded
+                if (!resumeFile.files.length) {
+                    alert('Please upload your resume file.');
+                    return;
+                }
+                
+                // Show loading indicator
+                submitBtn.disabled = true;
+                loadingIndicator.style.display = 'block';
+                resultAlert.innerHTML = '';
+                
+                try {
+                    // Create FormData to send file and form data
+                    const formData = new FormData();
+                    formData.append('fullName', fullName);
+                    formData.append('email', email);
+                    formData.append('education', education);
+                    formData.append('college', college);
+                    formData.append('interests', interests);
+                    formData.append('resume', resumeFile.files[0]);
+                    
+                    console.log('Sending analysis request...');
+                    
+                    // Send to backend
+                    const response = await fetch('/api/analyze-resume', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    console.log('Received response:', result);
+                    
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Analysis failed');
+                    }
+                    
+                    // Display success alert
+                    resultAlert.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ ${result.message}
+                        </div>
+                    `;
+                    
+                    // DISPLAY RESULTS - USING THE DIRECT PROPERTIES
+                    displayAnalysisResults(result);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    resultAlert.innerHTML = `
+                        <div class="alert alert-error">
+                            ❌ Error: ${error.message}
+                        </div>
+                    `;
+                } finally {
+                    // Hide loading indicator
+                    submitBtn.disabled = false;
+                    loadingIndicator.style.display = 'none';
+                }
+            });
+            
+            function displayAnalysisResults(result) {
+                console.log('Displaying results with data:', result);
+                
+                // Show analysis section
+                analysisPlaceholder.style.display = 'none';
+                analysisResult.style.display = 'block';
+                
+                // Clear previous keywords
+                keywordList.innerHTML = '';
+                
+                // Add keywords to the list - USING result.keywords DIRECTLY
+                if (result.keywords && result.keywords.length > 0) {
+                    result.keywords.forEach(keyword => {
+                        const keywordElement = document.createElement('div');
+                        keywordElement.className = `keyword ${keyword.importance}`;
+                        keywordElement.textContent = keyword.keyword;
+                        keywordList.appendChild(keywordElement);
+                    });
+                } else {
+                    keywordList.innerHTML = '<p>No keywords detected. Try adding more technical skills.</p>';
+                }
+                
+                // Update score - USING result.score DIRECTLY
+                const score = result.score || 0;
+                console.log('Setting score to:', score);
+                scoreValue.textContent = `${score}%`;
+                scoreProgress.style.width = `${score}%`;
+                scoreFeedback.textContent = result.feedback || 'No feedback available.';
+                
+                // Generate suggestions - USING result.suggestions DIRECTLY
+                suggestionList.innerHTML = '';
+                if (result.suggestions && result.suggestions.length > 0) {
+                    result.suggestions.forEach(suggestion => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.className = 'suggestion-item';
+                        suggestionItem.textContent = suggestion;
+                        suggestionList.appendChild(suggestionItem);
+                    });
+                } else {
+                    suggestionList.innerHTML = '<p>No suggestions available.</p>';
+                }
+            }
+            
+            // Test connection on load
+            testConnection();
+            
+            async function testConnection() {
+                try {
+                    const response = await fetch('/api/test');
+                    const data = await response.json();
+                    console.log('Server connection test:', data);
+                } catch (error) {
+                    console.error('Server connection failed:', error);
+                    alert('Server connection failed. Please make sure the server is running.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
